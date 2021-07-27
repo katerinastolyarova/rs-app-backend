@@ -12,29 +12,11 @@ provider:
 plugins:
   - serverless-webpack
   - serverless-offline
-  - serverless-openapi-documentation
 
 custom:
   webpack:
     webpackConfig: 'webpack.config.js'
     includeModules: true
-  documentation:
-    version: '1'
-    title: 'Product service API'
-    description: 'Product service API documentation'
-    models:
-      - name: "GetProductsListResponse"
-        description: "Get all products response"
-        contentType: "application/json"
-        schema: GetProductsListSchema
-      - name: "GetProductByIdResponse"
-        description: "Get product by id response"
-        contentType: "application/json"
-        schema: GetProductByIdSchema
-      - name: "ErrorResponse"
-        description: "An error response"
-        contentType: "application/json"
-        schema: ErrorResponseSchema
   serverless-offline:
     httpPort: 3001
 
