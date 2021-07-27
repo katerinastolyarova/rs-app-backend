@@ -1,0 +1,51 @@
+{
+  "name": "product-service",
+  "version": "1.0.0",
+  "description": "Product Service",
+  "main": "handler.js",
+  "scripts": {
+    "offline": "serverless offline --stage dev",
+    "offline-debug": "export SLS_DEBUG=* && serverless offline --stage dev",
+    "package-build": "sls package",
+    "deploy:dev": "sls deploy --stage dev",
+    "deploy:prod": "sls deploy --stage prod",
+    "remove:dev-stack": "sls remove --stage dev --region eu-west-1",
+    "remove:prod-stack": "sls remove --stage prod --region eu-west-1",
+    "eslint": "eslint ./src --ext .js",
+    "eslint:fix": "npm run eslint -- --fix",
+    "docs-update": "serverless openapi generate",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/katerinastolyarova/rs-app-backend.git"
+  },
+  "keywords": [
+    "aws",
+    "NodeJS"
+  ],
+  "author": "Katsyarina Stalyarova",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/katerinastolyarova/rs-app-backend/issues"
+  },
+  "homepage": "https://github.com/katerinastolyarova/rs-app-backend#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.14.8",
+    "@conqa/serverless-openapi-documentation": "^1.1.0",
+    "babel-loader": "^8.2.2",
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^7.31.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "jest": "^27.0.6",
+    "serverless-offline": "^7.0.0",
+    "serverless-openapi-documentation": "^0.4.0",
+    "serverless-plugin-webpack": "^1.5.1",
+    "serverless-webpack": "^5.5.1",
+    "webpack": "^3.12.0",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "winston": "^3.3.3"
+  }
+}
