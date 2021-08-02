@@ -12,7 +12,7 @@ exports.getProductsList = async (event) => {
 
     if (productsList) return successResponse(productsList);
 
-    return successResponse({ message: 'Product not found!' }, 404);
+    return successResponse({ message: 'Products not found!' }, 404);
   } catch (err) {
     return errorResponse(err);
   }
