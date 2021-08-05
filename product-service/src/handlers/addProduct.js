@@ -1,7 +1,8 @@
 import { Client } from 'pg';
 import { errorResponse, successResponse } from '../utils/responseBuilder';
 import winstonLogger from '../utils/logger';
-import { getAllProducts } from '../services/productService';
+import { addProduct } from '../services/productService';
+import productSchema from '../schemas/productSchema';
 
 const {
   PG_HOST, PG_PORT, PG_DATABASE, PG_USERNAME, PG_PASSWORD,
@@ -19,7 +20,7 @@ const dbOptions = {
   connectionTimeoutMillis: 5000,
 };
 
-exports.getProductsList = async (event) => {
+exports.addProduct = async (event) => {
   const client = new Client(dbOptions);
   await client.connect();
 
@@ -27,12 +28,18 @@ exports.getProductsList = async (event) => {
     winstonLogger.info(
       `Incoming request: ${JSON.stringify(event)}`,
     );
-    const productsList = await getAllProducts(client);
-    winstonLogger.info(`Result: ${JSON.stringify(productsList)}`);
 
-    if (productsList) return successResponse(productsList);
+    const productData = JSON.parse(event.body);
 
-    return successResponse({ message: 'Products not found!' }, 404);
+    const validation = productSchema.validate(productData);
+
+    if (validation.error) return successResponse({ message: `Product data is invalid, ${validation.error}` }, 400);
+
+    const addedProduct = await addProduct(client, productData);
+
+    winstonLogger.info(`The product was added successful: ${JSON.stringify(addedProduct)}`);
+
+    return successResponse(addedProduct);
   } catch (err) {
     return errorResponse(err);
   }

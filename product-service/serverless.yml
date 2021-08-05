@@ -2,6 +2,8 @@ service: product-service
 
 frameworkVersion: '2'
 
+useDotenv: true
+
 provider:
   name: aws
   runtime: nodejs14.x
@@ -9,9 +11,17 @@ provider:
   stage: dev
   region: eu-west-1
 
+environment:
+  PG_HOST: ${env:PG_HOST}
+  PG_PORT: ${env:PG_PORT}
+  PG_DATABASE: ${env:PG_DATABASE}
+  PG_USERNAME: ${env:PG_USERNAME}
+  PG_PASSWORD: ${env:PG_PASSWORD}
+
 plugins:
   - serverless-webpack
   - serverless-offline
+  - serverless-dotenv-plugin
 
 custom:
   webpack:
@@ -40,3 +50,17 @@ functions:
             parameters:
               paths:
                 productId: true
+  addProduct:
+    handler: src/handlers/addProduct.addProduct
+    events:
+      - http:
+          method: post
+          path: products
+          cors: true
+  deleteProduct:
+    handler: src/handlers/deleteProduct.deleteProduct
+    events:
+      - http:
+          method: delete
+          path: products/{productId}
+          cors: true
