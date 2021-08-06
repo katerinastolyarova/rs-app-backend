@@ -54,7 +54,7 @@ functions:
     handler: src/handlers/addProduct.addProduct
     events:
       - http:
-          method: post
+          method: put
           path: products
           cors: true
   deleteProduct:
