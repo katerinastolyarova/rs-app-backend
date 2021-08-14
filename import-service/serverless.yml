@@ -1,0 +1,59 @@
+service: import-service
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+  region: eu-west-1
+
+  iam:
+    role: 
+      statements:
+        - Effect: "Allow"        
+          Action: "s3:*"        
+          Resource: 
+            - "arn:aws:s3:::rs-school-import-service-bucket"
+            - "arn:aws:s3:::rs-school-import-service-bucket/*"
+        - Effect: "Allow"        
+          Action: "s3:ListBucket"        
+          Resource: 
+            - "arn:aws:s3:::rs-school-import-service-bucket"
+
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+custom:
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    includeModules: true
+  serverless-offline:
+    httpPort: 3005
+
+functions:
+  importProductsFile:
+    handler: src/handlers/importProductsFile.importProductsFile
+    events:
+      - http:
+          path: import
+          method: get
+          request:
+            parameters:
+              querystrings:
+                name: true
+          cors: true
+  importFileParser:
+    handler: src/handlers/importFileParser.importFileParser
+    events:
+      - s3:
+        bucket: rs-school-import-service-bucket
+        event: s3:ObjectCreated:*
+        rules:
+          - prefix: uploaded/
+          - suffix: .csv
+        existing: true
+

@@ -1,0 +1,93 @@
+openapi: 3.0.0
+info:
+  description: Product service API documentation
+  version: "1.0.0"
+  title: Product service API
+  contact:
+    email: katsyarina_stalyarova@epam.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+paths:
+  /products:
+    get:
+      summary: Get all products
+      operationId: getProductsList
+      description: |
+        Get all product Items
+      
+      responses:
+        '200':
+          description: List of all available products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
+  /products/{productId}:
+    get:
+      summary: Get Product By Id
+      description: Get Product By Id
+      operationId: getProductById
+      parameters:
+      - name: productId
+        in: path
+        description: productId
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 857aaf9e-dd73-4292-86c3-e155db022762
+      responses:
+        "200":
+          description: Product is find successful by productId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "404":
+          description: Product not found!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404'
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - price
+        - imgURL
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        title:
+          type: string
+          example: Deep Learning with JavaScript
+        description:
+          type: string
+          example: Deep Learning with JavaScript
+        price:
+          type: number
+          example: 24
+        imgURL:
+          type: string
+          format: url
+          example: 'https://google.com/test.jpg'
+  
+    inline_response_404:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+          example: Product not found!
