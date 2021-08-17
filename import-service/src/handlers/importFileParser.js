@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import S3 from 'aws-sdk/clients/s3';
 import { errorResponse, successResponse } from '../utils/responseBuilder';
 import winstonLogger from '../utils/logger';
@@ -11,17 +12,7 @@ exports.importFileParser = async (event) => {
       `Incoming request: ${JSON.stringify(event)}`,
     );
 
-    //   const record = event.Records[0];
-    const record = {
-      s3: {
-        bucket: {
-          name: 'rs-school-import-service-bucket',
-        },
-        object: {
-          key: 'uploaded/task5_products.csv',
-        },
-      },
-    };
+    const record = event.Records[0];
     const params = {
       Bucket: record.s3.bucket.name,
       Key: record.s3.object.key,
@@ -37,6 +28,7 @@ exports.importFileParser = async (event) => {
 
       return successResponse({ message: 'Success!' });
     }
+
     return errorResponse({ message: 'Unable parse file!' });
   } catch (err) {
     return errorResponse(err);

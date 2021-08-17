@@ -25,15 +25,9 @@ export const moveParsedFile = async (s3, params, record) => {
   };
 
   try {
-    await s3.copyObject(copyParams, (err, data) => {
-      if (err) console.log(err, err.stack);
-      else console.log(`Successful copy: ${data}`);
-    });
+    await s3.copyObject(copyParams).promise();
 
-    await s3.deleteObject(deleteParams, (err, data) => {
-      if (err) console.log(err, err.stack);
-      else console.log(`Successful delete: ${data}`);
-    });
+    await s3.deleteObject(deleteParams).promise();
 
     return true;
   } catch (error) {
