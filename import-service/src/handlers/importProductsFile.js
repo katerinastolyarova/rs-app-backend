@@ -28,7 +28,7 @@ exports.importProductsFile = async (event) => {
 
     if (signedUrl) return successResponse(signedUrl);
 
-    return successResponse({ message: 'URL not found' }, 404);
+    return errorResponse({ message: 'URL not found' }, 404);
   } catch (err) {
     return errorResponse(err);
   }

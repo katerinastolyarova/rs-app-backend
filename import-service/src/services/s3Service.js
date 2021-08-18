@@ -41,9 +41,7 @@ export const getProducts = async (s3, params) => {
 
     s3Stream
       .pipe(csvParser())
-      .on('data', (data) => {
-        console.log(data);
-      })
+      .on('data', console.log)
       .on('end', () => {
         console.log('Stream has ended');
       })
@@ -51,7 +49,7 @@ export const getProducts = async (s3, params) => {
         console.log(`error from csvParser: ${error}`);
       });
 
-    return true;
+    return;
   } catch (error) {
     throw new Error(`${error}: Unable to read file`);
   }
