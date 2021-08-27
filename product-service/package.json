@@ -48,6 +48,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.976.0",
     "dotenv": "^10.0.0",
     "joi": "^17.4.2",
     "pg": "^8.7.1",
