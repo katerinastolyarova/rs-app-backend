@@ -54,6 +54,11 @@ functions:
               querystrings:
                 name: true
           cors: true
+          authorizer:
+            name: importServiceAuthorizer
+            type: token
+            identitySource: method.request.header.Authorization
+            arn: "arn:aws:lambda:eu-west-1:080711163262:function:authorization-service-dev-basicAuthorizer"
   importFileParser:
     handler: src/handlers/importFileParser.importFileParser
     events:
@@ -65,3 +70,14 @@ functions:
           - suffix: .csv
         existing: true
 
+resources:
+  Resources:
+    GatewayResponse:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
