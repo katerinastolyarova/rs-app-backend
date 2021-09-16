@@ -1,4 +1,5 @@
 import csvParser from 'csv-parser';
+import productSchema from '../schemas/productSchema';
 
 export const getSignedUrl = async (s3, params) => {
   try {
@@ -37,19 +38,31 @@ export const moveParsedFile = async (s3, params, record) => {
 
 export const getProducts = async (s3, params) => {
   try {
+    const products = [];
     const s3Stream = s3.getObject(params).createReadStream();
 
-    s3Stream
-      .pipe(csvParser())
-      .on('data', console.log)
-      .on('end', () => {
-        console.log('Stream has ended');
-      })
-      .on('error', (error) => {
-        console.log(`error from csvParser: ${error}`);
-      });
+    return new Promise((resolve, reject) => {
+      s3Stream
+        .pipe(csvParser({ separator: ';' }))
+        .on('data', (data) => {
+          const validation = productSchema.validate(data);
 
-    return;
+          if (!validation.error) {
+            products.push(data);
+          } else {
+            console.log(`Invalid product data ${validation.error}`);
+          }
+        })
+        .on('end', () => {
+          console.log('Stream has ended');
+          console.table(products);
+          resolve(products);
+        })
+        .on('error', (error) => {
+          console.log(`error from csvParser: ${error}`);
+          reject(error);
+        });
+    });
   } catch (error) {
     throw new Error(`${error}: Unable to read file`);
   }
