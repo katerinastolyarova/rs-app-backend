@@ -2,6 +2,8 @@ service: product-service
 
 frameworkVersion: '2'
 
+useDotenv: true
+
 provider:
   name: aws
   runtime: nodejs14.x
@@ -9,9 +11,32 @@ provider:
   stage: dev
   region: eu-west-1
 
+  iam:
+    role: 
+      statements:
+        - Effect: "Allow"        
+          Action: "sqs:*"        
+          Resource: 
+            - Fn::GetAtt: [ catalogItemsQueue, Arn ]
+        - Effect: "Allow"        
+          Action: "sns:*"        
+          Resource: 
+            Ref: createProductTopic
+
+  environment:
+    PG_HOST: ${env:PG_HOST}
+    PG_PORT: ${env:PG_PORT}
+    PG_DATABASE: ${env:PG_DATABASE}
+    PG_USERNAME: ${env:PG_USERNAME}
+    PG_PASSWORD: ${env:PG_PASSWORD}
+    SQS_URL:
+      Ref: catalogItemsQueue
+    SNS_TOPIC_ARN: !Ref createProductTopic
+
 plugins:
   - serverless-webpack
   - serverless-offline
+  - serverless-dotenv-plugin
 
 custom:
   webpack:
@@ -19,6 +44,39 @@ custom:
     includeModules: true
   serverless-offline:
     httpPort: 3001
+
+resources:
+  Resources:
+    catalogItemsQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "catalogItemsQueue"  
+    createProductTopic:
+       Type: AWS::SNS::Topic
+       Properties:
+         TopicName: createProductTopic    
+    primeSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: katerina.stolyarova89@gmail.com
+        Protocol: email
+        TopicArn: {"Ref": "createProductTopic"}
+        FilterPolicy:
+          price:
+            - numeric:
+              - ">="
+              - 30
+    basicSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: katsyarina_stalyarova@epam.com
+        Protocol: email
+        TopicArn: {"Ref": "createProductTopic"}
+        FilterPolicy:
+          price:
+            - numeric:
+              - "<"
+              - 30
 
 
 functions:
@@ -40,3 +98,27 @@ functions:
             parameters:
               paths:
                 productId: true
+  addProduct:
+    handler: src/handlers/addProduct.addProduct
+    events:
+      - http:
+          method: put
+          path: products
+          cors: true
+  deleteProduct:
+    handler: src/handlers/deleteProduct.deleteProduct
+    events:
+      - http:
+          method: delete
+          path: products/{productId}
+          cors: true
+  catalogBatchProcess:
+    handler: src/handlers/catalogBatchProcess.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - catalogItemsQueue
+              - Arn
+

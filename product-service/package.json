@@ -30,9 +30,14 @@
   },
   "homepage": "https://github.com/katerinastolyarova/rs-app-backend#readme",
   "devDependencies": {
-    "@babel/preset-env": "^7.14.8",
+    "@babel/core": "^7.15.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.14.7",
+    "@babel/plugin-transform-runtime": "^7.15.0",
+    "@babel/plugin-transform-spread": "^7.14.6",
+    "@babel/preset-env": "^7.15.0",
     "babel-loader": "^8.2.2",
     "babel-preset-env": "^1.7.0",
+    "babel-preset-latest": "^6.24.1",
     "eslint": "^7.31.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "jest": "^27.0.6",
@@ -43,6 +48,11 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.976.0",
+    "dotenv": "^10.0.0",
+    "joi": "^17.4.2",
+    "pg": "^8.7.1",
+    "serverless-dotenv-plugin": "^3.9.0",
     "winston": "^3.3.3"
   }
 }

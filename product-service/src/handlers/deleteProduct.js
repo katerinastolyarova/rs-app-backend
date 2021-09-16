@@ -1,7 +1,7 @@
 import { Client } from 'pg';
 import { errorResponse, successResponse } from '../utils/responseBuilder';
 import winstonLogger from '../utils/logger';
-import { getAllProducts } from '../services/productService';
+import { deleteProduct } from '../services/productService';
 
 const {
   PG_HOST, PG_PORT, PG_DATABASE, PG_USERNAME, PG_PASSWORD,
@@ -19,7 +19,7 @@ const dbOptions = {
   connectionTimeoutMillis: 5000,
 };
 
-exports.getProductsList = async (event) => {
+exports.deleteProduct = async (event) => {
   const client = new Client(dbOptions);
   await client.connect();
 
@@ -27,12 +27,16 @@ exports.getProductsList = async (event) => {
     winstonLogger.info(
       `Incoming request: ${JSON.stringify(event)}`,
     );
-    const productsList = await getAllProducts(client);
-    winstonLogger.info(`Result: ${JSON.stringify(productsList)}`);
 
-    if (productsList) return successResponse(productsList);
+    const { productId = '' } = event.pathParameters;
 
-    return successResponse({ message: 'Products not found!' }, 404);
+    const product = await deleteProduct(client, productId);
+
+    winstonLogger.info(`Result: ${JSON.stringify(product)}`);
+
+    if (product) return successResponse(product);
+
+    return successResponse({ message: 'Product not found!' }, 404);
   } catch (err) {
     return errorResponse(err);
   }
