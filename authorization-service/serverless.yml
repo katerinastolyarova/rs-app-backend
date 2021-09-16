@@ -1,0 +1,33 @@
+service: authorization-service
+
+useDotenv: true
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+  region: eu-west-1
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+custom:
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    includeModules: true
+  serverless-offline:
+    httpPort: 3007
+  login: katerinastolyarova
+
+functions:
+  basicAuthorizer:
+    handler: src/handlers/basicAuthorizer.basicAuthorizer
+    environment:
+      username: ${self:custom.login}
+      password: ${env:${self:custom.login}}
+
